@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Library System</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Library System</h1>
+    <p class="hint">Add • Search • Borrow • Return • Delete</p>
+  </header>
+
+  <main class="container">
+    <!-- Add Book -->
+    <section class="card">
+      <h2>Add a book</h2>
+
+      <div class="grid2">
+        <label>
+          Title
+          <input id="title" type="text" placeholder="e.g., Dune" />
+        </label>
+
+        <label>
+          Author
+          <input id="author" type="text" placeholder="e.g., Frank Herbert" />
+        </label>
+      </div>
+
+      <div class="grid2">
+        <label>
+          Total copies
+          <input id="copies" type="number" min="1" value="1" />
+        </label>
+
+        <label>
+          Borrower name (optional)
+          <input id="borrower" type="text" placeholder="e.g., Alice" />
+        </label>
+      </div>
+
+      <button id="addBtn" class="primary" type="button">Add Book</button>
+      <p id="status" class="status" role="status"></p>
+    </section>
+
+    <!-- Books / Search -->
+    <section class="card">
+      <div class="row-between">
+        <h2>Books</h2>
+        <div class="toolbar">
+          <input id="search" type="text" placeholder="Search by title or author..." />
+          <button id="clearBtn" type="button">Clear</button>
+        </div>
+      </div>
+
+      <ul id="bookList" class="list"></ul>
+
+      <div class="empty" id="emptyState">
+        No books yet. Add a book above.
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --ink:#111827;
+  --muted:#6b7280;
+  --top:#1f2a44;
+  --primary:#2f6fed;
+  --danger:#d64545;
+  --border:#e5e7eb;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
+}
+
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+
+.topbar{
+  background:var(--top);
+  color:#fff;
+  padding:18px 22px;
+}
+
+.topbar h1{ margin:0; font-size:22px; }
+.hint{ margin:6px 0 0; opacity:.9; font-size:13px; }
+
+.container{
+  max-width:980px;
+  margin:18px auto;
+  padding:0 16px 28px;
+  display:grid;
+  gap:16px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:16px;
+}
+
+h2{ margin:0 0 12px; font-size:18px; }
+
+label{
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+input{
+  width:100%;
+  padding:10px 10px;
+  margin-top:6px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+}
+input:focus{
+  border-color:#9cbaff;
+  box-shadow:0 0 0 3px rgba(47,111,237,.15);
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+
+.primary{
+  margin-top:8px;
+  background:var(--primary);
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700;
+}
+.primary:hover{ filter:brightness(.95); }
+
+.row-between{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.toolbar input{
+  width:280px;
+  max-width:70vw;
+}
+
+button{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:10px;
+  padding:9px 12px;
+  cursor:pointer;
+  font-weight:600;
+}
+button:hover{ background:#f3f4f6; }
+
+.list{
+  list-style:none;
+  padding:0;
+  margin:12px 0 0;
+  display:grid;
+  gap:12px;
+}
+
+.list > li{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+}
+
+.book-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+
+.book-meta b{ font-size:16px; }
+.book-meta div{ margin-top:4px; color:var(--muted); font-size:13px; }
+
+.badges{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.badge{
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  color:var(--muted);
+  background:#fafafa;
+}
+
+.actions{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn-danger{
+  color:#fff;
+  background:var(--danger);
+  border-color:transparent;
+}
+.btn-danger:hover{ filter:brightness(.95); }
+
+.btn-primary{
+  color:#fff;
+  background:var(--primary);
+  border-color:transparent;
+}
+.btn-primary:hover{ filter:brightness(.95); }
+
+.borrowed{
+  margin-top:12px;
+  border-top:1px solid var(--border);
+  padding-top:10px;
+}
+
+.borrowed h3{
+  margin:0 0 8px;
+  font-size:14px;
+  color:var(--muted);
+}
+
+.borrow-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap:8px;
+}
+
+.borrow-item{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  border:1px dashed #dbe3ff;
+  border-radius:12px;
+  padding:10px;
+  background:#f5f8ff;
+}
+
+.borrow-item .who{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.borrow-item .who strong{
+  font-size:14px;
+}
+.borrow-item .who span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.small-muted{ color:var(--muted); font-size:12px; }
+
+.empty{
+  display:none;
+  margin-top:18px;
+  color:var(--muted);
+}
+.status{
+  margin:10px 0 0;
+  min-height:18px;
+  color:var(--muted);
+  font-size:13px;
+}
+const LS_KEY = "library_system_v1";
+
+const titleEl = document.getElementById("title");
+const authorEl = document.getElementById("author");
+const copiesEl = document.getElementById("copies");
+const borrowerEl = document.getElementById("borrower");
+
+const addBtn = document.getElementById("addBtn");
+const statusEl = document.getElementById("status");
+
+const searchEl = document.getElementById("search");
+const clearBtn = document.getElementById("clearBtn");
+const bookListEl = document.getElementById("bookList");
+const emptyStateEl = document.getElementById("emptyState");
+
+let state = loadState(); // { books: [...] }
+let currentQuery = "";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return { books: [] };
+    const parsed = JSON.parse(raw);
+    return parsed && Array.isArray(parsed.books) ? parsed : { books: [] };
+  } catch {
+    return { books: [] };
+  }
+}
+
+function saveState() {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+function uid() {
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
+function availableCopies(book) {
+  const borrowedCount = (book.borrowed || []).length;
+  return book.totalCopies - borrowedCount;
+}
+
+function showStatus(msg) {
+  statusEl.textContent = msg || "";
+}
+
+function render() {
+  const q = currentQuery.trim().toLowerCase();
+
+  const filtered = state.books.filter(b => {
+    const t = b.title.toLowerCase();
+    const a = b.author.toLowerCase();
+    return !q || t.includes(q) || a.includes(q);
+  });
+
+  bookListEl.innerHTML = "";
+
+  if (filtered.length === 0) {
+    emptyStateEl.style.display = filtered.length === 0 ? "block" : "none";
+    return;
+  }
+  emptyStateEl.style.display = "none";
+
+  for (const book of filtered) {
+    const li = document.createElement("li");
+
+    const borrowed = book.borrowed || [];
+    const avail = availableCopies(book);
+
+    li.innerHTML = `
+      <div class="book-top">
+        <div class="book-meta">
+          <b>${escapeHtml(book.title)}</b>
+          <div>by ${escapeHtml(book.author)}</div>
+        </div>
+        <div class="badges">
+          <div class="badge">Total: ${book.totalCopies}</div>
+          <div class="badge">Available: ${avail}</div>
+          <div class="badge">Borrowed: ${borrowed.length}</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" type="button" data-action="borrow">Borrow</button>
+        <button type="button" data-action="returnAll">Return All</button>
+        <button class="btn-danger" type="button" data-action="delete">Delete</button>
+      </div>
+
+      <div class="borrowed">
+        <h3>Borrowed list</h3>
+        ${borrowed.length === 0 ? `<div class="small-muted">No one has borrowed this yet.</div>` : `
+          <ul class="borrow-list">
+            ${borrowed.map(item => `
+              <li class="borrow-item">
+                <div class="who">
+                  <strong>${escapeHtml(item.borrowerName)}</strong>
+                  <span>Borrowed at: ${new Date(item.borrowedAt).toLocaleString()}</span>
+                </div>
+                <button type="button" data-action="returnOne" data-borrowid="${item.id}">
+                  Return
+                </button>
+              </li>
+            `).join("")}
+          </ul>
+        `}
+      </div>
+    `;
+
+    // Attach handlers (need to find elements after innerHTML)
+    const btnBorrow = li.querySelector('[data-action="borrow"]');
+    const btnReturnAll = li.querySelector('[data-action="returnAll"]');
+    const btnDelete = li.querySelector('[data-action="delete"]');
+
+    btnBorrow.addEventListener("click", () => {
+      handleBorrow(book.id);
+    });
+
+    btnReturnAll.addEventListener("click", () => {
+      handleReturnAll(book.id);
+    });
+
+    btnDelete.addEventListener("click", () => {
+      handleDelete(book.id);
+    });
+
+    // Return single buttons
+    li.querySelectorAll('[data-action="returnOne"]').forEach(btn => {
+      btn.addEventListener("click", () => {
+        const borrowId = btn.getAttribute("data-borrowid");
+        handleReturnOne(book.id, borrowId);
+      });
+    });
+
+    bookListEl.appendChild(li);
+  }
+}
+
+function handleAdd() {
+  const title = titleEl.value.trim();
+  const author = authorEl.value.trim();
+  const totalCopies = Number(copiesEl.value);
+  const borrowerName = borrowerEl.value.trim();
+
+  if (!title || !author) {
+    showStatus("Please enter both Title and Author.");
+    return;
+  }
+  if (!Number.isFinite(totalCopies) || totalCopies < 1) {
+    showStatus("Total copies must be at least 1.");
+    return;
+  }
+
+  const newBook = {
+    id: uid(),
+    title,
+    author,
+    totalCopies,
+    borrowed: [] // borrowed list (as requested)
+  };
+
+  state.books.push(newBook);
+  saveState();
+  titleEl.value = "";
+  authorEl.value = "";
+  copiesEl.value = 1;
+
+  // Optional: auto-borrow if borrowerName provided
+  if (borrowerName) {
+    const createdId = newBook.id;
+    state = loadState(); // ensure latest structure, harmless
+    handleBorrow(createdId, borrowerName);
+  } else {
+    showStatus("Book added.");
+  }
+
+  // Ensure UI refresh
+  saveState();
+  render();
+}
+
+function handleBorrow(bookId, forcedName = null) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+
+  const avail = availableCopies(book);
+  if (avail <= 0) {
+    showStatus("No available copies to borrow.");
+    return;
+  }
+
+  const borrowerName = (forcedName ?? borrowerEl.value.trim()).trim() || "Guest";
+
+  const item = {
+    id: uid(),
+    borrowerName,
+    borrowedAt: Date.now()
+  };
+
+  book.borrowed = book.borrowed || [];
+  book.borrowed.push(item);
+
+  saveState();
+  showStatus(`Borrowed by ${borrowerName}.`);
+  render();
+}
+
+function handleReturnOne(bookId, borrowId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+
+  book.borrowed = (book.borrowed || []).filter(x => x.id !== borrowId);
+
+  saveState();
+  showStatus("Returned one copy.");
+  render();
+}
+
+function handleReturnAll(bookId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!book) return;
+
+  book.borrowed = [];
+  saveState();
+  showStatus("Returned all borrowed copies.");
+  render();
+}
+
+function handleDelete(bookId) {
+  const idx = state.books.findIndex(b => b.id === bookId);
+  if (idx === -1) return;
+
+  const ok = confirm("Delete this book? (This will remove its borrowed list too.)");
+  if (!ok) return;
+
+  state.books.splice(idx, 1);
+  saveState();
+  showStatus("Book deleted.");
+  render();
+}
+
+addBtn.addEventListener("click", handleAdd);
+
+searchEl.addEventListener("input", () => {
+  currentQuery = searchEl.value;
+  render();
+});
+
+clearBtn.addEventListener("click", () => {
+  searchEl.value = "";
+  currentQuery = "";
+  render();
+  showStatus("");
+});
+
+// initial draw
+render();
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
